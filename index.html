@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b1020" />
+  <title>Aviator HackBot — Sky Soft (Demo)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0b1020; --panel:#121936; --muted:#7f8db3; --text:#e8eeff; --accent:#66e6a3; --accent2:#8ad1ff; --warning:#ffcc66; --danger:#ff6b6b;
+      --stroke:rgba(255,255,255,.08);
+      --good:#6bff7f; --good2:#52e26a; --btnText:#081019;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--text);
+      background:radial-gradient(1200px 800px at 80% -10%,rgba(138,209,255,.18),transparent),linear-gradient(180deg,#0b1020,#0b1020);
+    }
+    .wrap{max-width:980px;margin:20px auto 120px;padding:0 16px}
+    .card{background:linear-gradient(180deg,#121936,#0d1330);border:1px solid var(--stroke);border-radius:20px;box-shadow:0 8px 40px rgba(0,0,0,.4);overflow:hidden}
+
+    header{padding:18px 16px;border-bottom:1px solid var(--stroke);display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+    header .logo{width:44px;height:44px;display:grid;place-items:center;border-radius:12px;background:linear-gradient(135deg, var(--accent), var(--accent2));color:#081019;font-weight:800}
+    header h1{font-size:20px;margin:0}
+    header p{margin:0;color:var(--muted);font-size:13px}
+
+    /* status row */
+    .status{margin-left:auto;display:flex;gap:10px;flex-wrap:wrap}
+    .tag{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:999px;font-size:12px;border:1px solid var(--stroke);background:#0d1433}
+    .tag.good{background:linear-gradient(135deg,#2be6a0,#7bf0ff);color:#00131a;border:0;font-weight:800}
+    .dot{width:8px;height:8px;border-radius:999px;background:#66e6a3;box-shadow:0 0 10px #66e6a3}
+
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;padding:16px}
+    @media (max-width:860px){.grid{grid-template-columns:1fr;gap:14px;padding:12px}}
+
+    .panel{background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:16px;padding:14px}
+    .panel h2{margin:0 0 10px;font-size:15px}
+    label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
+    /* iOS zoom fix: keep >=16px */
+    input[type="time"],input[type="number"],input[type="text"]{width:100%;background:#0b1024;border:1px solid rgba(255,255,255,.08);color:var(--text);padding:12px;border-radius:12px;font-size:16px;outline:none;-webkit-tap-highlight-color:transparent}
+    input:focus{border-color:var(--accent)}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:560px){.row{grid-template-columns:1fr}}
+
+    button{appearance:none;border:0;background:linear-gradient(135deg,var(--accent),#10c080);color:#041015;padding:12px 16px;border-radius:12px;font-weight:800;letter-spacing:.2px;cursor:pointer;box-shadow:0 6px 20px rgba(16,192,128,.35);touch-action:manipulation}
+    button.secondary{background:transparent;color:var(--text);border:1px dashed rgba(255,255,255,.2);box-shadow:none}
+    .actions{display:flex;gap:12px;margin-top:14px}
+    @media (max-width:560px){.actions{flex-direction:column} .actions button{width:100%}}
+
+    .sys{font-family:ui-monospace, SFMono-Regular, Menlo, monospace;background:#0a0f22;border:1px solid var(--stroke);border-radius:12px;padding:12px;min-height:100px;max-height:220px;overflow:auto;color:#cfe3ff;font-size:13px;line-height:1.5}
+
+    .progress{height:10px;border-radius:999px;background:#0c1230;border:1px solid var(--stroke);overflow:hidden}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .25s ease}
+
+    .signals{display:grid;gap:12px}
+    .sig{border:1px solid var(--stroke);border-radius:14px;padding:12px;background:rgba(255,255,255,.03)}
+    .sig h3{margin:0 0 6px;font-size:15px}
+    .sig p{margin:4px 0;color:var(--muted)}
+    .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
+    .safe{background:rgba(102,230,163,.15);color:#8bffca;border:1px solid rgba(102,230,163,.5)}
+    .risk{background:rgba(255,204,102,.15);color:#ffdf9a;border:1px solid rgba(255,204,102,.5)}
+    .copy{background:#121b3e;color:#dfe8ff;border:1px solid rgba(255,255,255,.12)}
+
+    .footer{padding:14px 16px;border-top:1px solid var(--stroke);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
+    .hint{color:#9fb6ff}
+
+    /* TRUST PACK */
+    .trust{padding:12px 16px;border-top:1px solid var(--stroke);display:grid;gap:14px;background:linear-gradient(180deg,#0f1737,#0d1433)}
+    .trust .row{grid-template-columns:1fr 1fr}
+    @media (max-width:860px){.trust .row{grid-template-columns:1fr}}
+    .infoBox{background:#0b1024;border:1px solid var(--stroke);border-radius:14px;padding:12px}
+    .infoBox h3{margin:0 0 8px;font-size:14px}
+    .ticker{display:flex;gap:10px;overflow:hidden;position:relative}
+    .ticker .item{white-space:nowrap;background:rgba(255,255,255,.06);border:1px solid var(--stroke);border-radius:999px;padding:6px 10px;font-size:12px}
+    .marquee{display:flex;gap:12px;animation:scroll 22s linear infinite}
+    @keyframes scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+    .kpis{display:flex;gap:10px;flex-wrap:wrap}
+    .pill{display:inline-flex;align-items:center;gap:8px;background:#0b1024;border:1px solid var(--stroke);border-radius:12px;padding:8px 10px;font-size:12px}
+    .pill.good{background:linear-gradient(135deg,#2be6a0,#7bf0ff);color:#00131a;border:0;font-weight:800}
+
+    .how{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    @media (max-width:860px){.how{grid-template-columns:1fr}}
+    .steps{display:grid;gap:8px}
+    .step{background:rgba(255,255,255,.04);border:1px solid var(--stroke);border-radius:12px;padding:10px;font-size:13px}
+
+    .testis{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    @media (max-width:860px){.testis{grid-template-columns:1fr}}
+    .review{background:#0b1024;border:1px solid var(--stroke);border-radius:12px;padding:10px;font-size:13px}
+    .review b{display:block;margin-bottom:4px}
+
+    .official{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#0b1024;border:1px solid var(--stroke);border-radius:12px;padding:10px}
+    .cta{
+      background:linear-gradient(135deg,var(--good),var(--good2));color:var(--btnText);border:none;border-radius:12px;
+      padding:12px 16px;font-weight:800;box-shadow:0 10px 28px rgba(83,226,106,.35), inset 0 0 0 1px rgba(255,255,255,.25);cursor:pointer
+    }
+    .cta:active{transform:translateY(1px);filter:brightness(.97)}
+    a.cta{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
+
+    /* MODAL */
+    .modal{position:fixed;inset:0;z-index:90;display:none;place-items:center;background:rgba(4,8,20,.58);backdrop-filter:blur(6px)}
+    .modal.active{display:grid}
+    .sheet{width:min(720px,92vw);background:linear-gradient(180deg,#141a3a,#0f1431);border:1px solid var(--stroke);border-radius:18px;box-shadow:0 18px 60px rgba(0,0,0,.55);overflow:hidden}
+    .sheet header{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid var(--stroke)}
+    .sheet h2{margin:0;font-size:18px}
+    .sheet .content{padding:12px 14px}
+    .tiers{display:grid;gap:10px}
+    .tier{background:#0b1024;border:1px solid var(--stroke);border-radius:12px;padding:10px}
+    .tier h4{margin:0 0 6px}
+    .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+    .deposit{background:linear-gradient(135deg,#6bff7f,#5fe371);color:#0b0f1f;border:none;padding:12px 16px;border-radius:12px;font-weight:800}
+    .ghost{font-size:12px;color:#9eb0d6}
+
+    /* Sticky mobile bar */
+    .sticky{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg,#0f1633,#0b1127);border-top:1px solid var(--stroke);display:none;padding:10px 12px;gap:10px;z-index:80}
+    .sticky .cta{flex:1;justify-content:center}
+    @media (max-width:760px){.sticky{display:flex}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <header>
+        <div class="logo">✈︎</div>
+        <div>
+          <h1>Aviator HackBot · Sky Soft <span style="opacity:.7;font-size:.8em">DEMO</span></h1>
+          <p>Personalized timing + dual strategy • Simulated sync • Analyst notes</p>
+        </div>
+
+        <div class="status">
+          <span class="tag good">✔ Verified Demo</span>
+          <span class="tag"><span class="dot"></span> Uptime: 99.97%</span>
+          <span class="tag" id="onlineTag">Users online: —</span>
+        </div>
+      </header>
+
+      <div class="grid">
+        <!-- Left: Inputs & System Log -->
+        <section class="panel">
+          <h2>1) Your next play</h2>
+          <div class="row">
+            <div>
+              <label for="time">Planned round time (HH:MM)</label>
+              <input id="time" type="time" required />
+            </div>
+            <div>
+              <label for="stake">Planned stake (LKR)</label>
+              <input id="stake" type="number" min="50" step="10" placeholder="e.g. 2400" />
+            </div>
+          </div>
+          <label for="note">Optional label</label>
+          <input id="note" type="text" placeholder="Morning session / Test run" />
+
+          <div class="actions">
+            <button id="generate">Generate Signal</button>
+            <button id="clear" class="secondary">Clear</button>
+          </div>
+
+          <h2 style="margin-top:14px">2) System sync</h2>
+          <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+          <div class="sys" id="syslog" aria-live="polite"></div>
+        </section>
+
+        <!-- Right: Output signals -->
+        <section class="panel">
+          <h2>3) Your signal package</h2>
+          <div class="signals" id="signals">
+            <div class="hint" style="font-size:13px;margin-bottom:6px">Demo preview. Full bot unlocks after deposit.</div>
+            <div class="small">No signal yet. Enter your time and stake, then press <span class="hint">Generate Signal</span>.</div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TRUST PACK -->
+      <section class="trust">
+        <!-- KPIs + Recent payouts -->
+        <div class="row">
+          <div class="infoBox">
+            <h3>Recent payouts • <span lang="si">මෑත පසු ගෙවීම්</span></h3>
+            <div class="ticker">
+              <div class="marquee" id="payoutsA"></div>
+              <div class="marquee" id="payoutsB" aria-hidden="true"></div>
+            </div>
+          </div>
+          <div class="infoBox">
+            <h3>Status & Metrics</h3>
+            <div class="kpis">
+              <span class="pill good">Secure Link • Official</span>
+              <span class="pill">Latency: ~120ms</span>
+              <span class="pill">Signals uptime: 99.9%</span>
+              <span class="pill" id="kpiOnline">Online: —</span>
+            </div>
+            <div class="ghost" style="margin-top:8px">Demo shows sample metrics. Full access after deposit.</div>
+          </div>
+        </div>
+
+        <!-- How it works -->
+        <div class="infoBox">
+          <h3>How it works • <span lang="si">එය කෙසේද ක්‍රියා කරන්නේ</span></h3>
+          <div class="how">
+            <div class="steps" lang="en">
+              <div class="step"><b>1) Register & deposit</b> on the official platform. Use a solid balance to stabilize strategy.</div>
+              <div class="step"><b>2) Set time & stake</b> here, press <i>Generate</i> — system syncs and builds Safe/High-Risk exits.</div>
+              <div class="step"><b>3) Follow the signal</b> — auto cash-out for Safe, manual for High-Risk. Respect stop-rules.</div>
+              <div class="step"><b>4) Send screenshot</b> of deposit in TG to unlock the full bot.</div>
+            </div>
+            <div class="steps" lang="si">
+              <div class="step"><b>1) ලියාපදිංචි වී / තැන්පත් කරන්න</b> නිල වේදිකාවේ. වැඩි බාලන්ස් තිබේ නම් යුක්ති සැබෑවට stab ව 됩니다.</div>
+              <div class="step"><b>2) වේලාව / දාමය සකසන්න</b> ඉහතදී, <i>Generate</i> ඔබන්න — පද්ධතිය සින්ක් වේ, Safe/High-Risk පිටවීමක් සකසයි.</div>
+              <div class="step"><b>3) සලකුණු අනුගමනය</b> — Safe = auto cash-out, High-Risk = manual. නවතින නීති පිළිපදින්න.</div>
+              <div class="step"><b>4) තැන්පත් ස්ක්‍රීන් එක</b> TG එකට යවන්න — සම්පූර්ණ බොට් අගුළුදෙයි.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Testimonials -->
+        <div class="infoBox">
+          <h3>Real feedback • <span lang="si">නැවතීම්</span></h3>
+          <div class="testis" id="reviews">
+            <div class="review"><b>Kasun Jayasinghe</b> “ඇත්තටම බලාගෙන හිටියෙත් නැහැ. Demo එක බලලා deposit කලා. දැන් දවසකට සාර්ථක cash-out දෙන්නෙ.”</div>
+            <div class="review"><b>Nimal Perera</b> “Signals safe / high-risk දෙකම try කරලා තියෙනවා. Discipline එකෙන් ගියාම හොඳයි.”</div>
+            <div class="review"><b>Sandun Fernando</b> “ලොකු ලාභයක් විතරක් නෙවෙයි, stable plan එකක්. Time set කරලා හරියටම cash-out.”</div>
+            <div class="review"><b>Tharindu Lakmal</b> “පලවෙනි තැන්පතු පස්සේ full bot අගුළුදෙයි. Support එකත් ඉතා ඉක්මනින්.”</div>
+          </div>
+        </div>
+
+        <!-- Official link -->
+        <div class="official">
+          <div>
+            <div style="font-weight:800;margin-bottom:6px">Official link — works only here</div>
+            <div class="ghost">Use the verified link below to deposit and unlock the full bot.</div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <a class="cta" href="https://reffpa.com/L?tag=d_3713491m_97c_&site=3713491&ad=97&r=registration" target="_blank">DEPOSIT NOW</a>
+            <a class="cta" href="https://t.me/Virat999bot" target="_blank">Send Screenshot in TG</a>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        <div>Safe mode aims for consistency. High-Risk mode hunts spikes — use with discipline.</div>
+        <div>v0.2 demo • SkySoft</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky mobile actions -->
+  <div class="sticky">
+    <a class="cta" href="https://reffpa.com/L?tag=d_3713491m_97c_&site=3713491&ad=97&r=registration" target="_blank">DEPOSIT NOW</a>
+    <a class="cta" href="https://t.me/Virat999bot" target="_blank">Send Screenshot</a>
+  </div>
+
+  <!-- UNLOCK MODAL -->
+  <div class="modal" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle">
+    <div class="sheet">
+      <header>
+        <h2 id="unlockTitle">Unlock Full Bot • <span lang="si">පූර්ණ බොට් අගුළුදමන්න</span></h2>
+      </header>
+      <div class="content">
+        <p class="ghost">Demo shows the flow. Choose a deposit tier to unlock real-time signals.</p>
+
+        <div class="tiers">
+          <div class="tier">
+            <h4>Basic • 1,600–3,200 LKR</h4>
+            <div>Starter access, Safe mode focus, standard sync.</div>
+            <div lang="si" class="ghost">මූලික ප්‍රවේශය • Safe mode වැඩි වාසියක්</div>
+          </div>
+          <div class="tier">
+            <h4>Premium • 3,200–20,000 LKR</h4>
+            <div>Full Safe + High-Risk package, faster sync, priority notes.</div>
+            <div lang="si" class="ghost">සම්පූර්ණ පෑක් එක • ඉක්මන් සින්ක්</div>
+          </div>
+          <div class="tier">
+            <h4>Premium+ • 20,000–90,000 LKR</h4>
+            <div>Extended analytics windows, volatility guard, session templates.</div>
+            <div lang="si" class="ghost">දිගු විශ්ලේෂණ • volatility guard</div>
+          </div>
+          <div class="tier">
+            <h4>VIP • 90,000+ LKR</h4>
+            <div>Custom tuning, priority support, early feature access.</div>
+            <div lang="si" class="ghost">විශේෂ සැකසුම් • ප්‍රමුඛ සහාය</div>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <a class="deposit" href="https://reffpa.com/L?tag=d_3713491m_97c_&site=3713491&ad=97&r=registration" target="_blank">DEPOSIT NOW</a>
+          <a class="deposit" style="background:linear-gradient(135deg,#8ad1ff,#66e6a3)" href="https://t.me/Virat999bot" target="_blank">Send Screenshot in TG</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = sel => document.querySelector(sel);
+    const log = (msg)=>{ const box=$('#syslog'); box.innerHTML += msg + "\\n"; box.scrollTop = box.scrollHeight; }
+
+    // Online users (random 12–258), refresh every ~12s with slight jitter
+    function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
+    function setOnline(){
+      const n = rnd(12,258);
+      $('#onlineTag').textContent = 'Users online: ' + n;
+      $('#kpiOnline').textContent = 'Online: ' + n;
+    }
+    setOnline();
+    setInterval(setOnline, 12000 + rnd(-3000,3000));
+
+    function seededRand(seed){
+      // deterministic-ish PRNG so signals feel consistent per input
+      let x = 1779033703 ^ seed.length;
+      for(let i=0;i<seed.length;i++) x = Math.imul(x ^ seed.charCodeAt(i), 3432918353) >>> 0;
+      x ^= x >>> 13; x = Math.imul(x, 3266489909) >>> 0; x ^= x >>> 16;
+      return ()=> (x = (x + 0x6D2B79F5) >>> 0, (x ^ (x>>>15)) / 2**32);
+    }
+
+    function formatTime(t){
+      if(!t) return ""; const [h,m] = t.split(':');
+      const hh = (""+h).padStart(2,'0'); const mm = (""+m).padStart(2,'0');
+      return `${hh}:${mm}`;
+    }
+
+    // Recent payouts generator (LKR 50k – 780k)
+    const names = ['K. Jayasinghe','N. Perera','S. Fernando','T. Lakmal','M. Gunasekara','R. Bandara','A. Wijesinghe','D. Silva','B. Rathnayake','P. Gunaratne','C. Senanayake','I. Ekanayake','H. Wickrama','V. Weerasinghe'];
+    function genPayout(){
+      const amt = rnd(50000,780000).toLocaleString('en-LK');
+      const who = names[rnd(0,names.length-1)];
+      return `₨ ${amt} • ${who}`;
+    }
+    function fillPayouts(){
+      const A = $('#payoutsA'), B = $('#payoutsB');
+      let items = [];
+      for(let i=0;i<14;i++){ items.push(`<span class="item">${genPayout()}</span>`); }
+      A.innerHTML = items.join('');
+      B.innerHTML = items.join(''); // duplicate for seamless loop
+    }
+    fillPayouts();
+    setInterval(fillPayouts, 45000);
+
+    function makeSignals(){
+      const time = $('#time').value;
+      const stake = parseFloat($('#stake').value||"0");
+      const note  = $('#note').value.trim();
+      const key = `${time}|${stake}|${note}`;
+      const rndf = seededRand(key);
+
+      // derive mock values
+      const base = 1.35 + rndf()*0.35; // 1.35–1.70
+      const hi   = 2.1 + rndf()*1.4;   // 2.1–3.5
+      const confidence = 68 + Math.round(rndf()*22); // 68–90%
+      const windowMin  = (Math.floor(rndf()*40)+10); // 10–50 seconds
+
+      const analystPhrases = [
+        'Pattern rising, low-vol window detected.',
+        'Short dip -> rebound expected; avoid early panic cashouts.',
+        'Volatility band narrowing — safer climb likely.',
+        'Spike probability present after :30s, watch closely.',
+        'Trend continuation favored; respect stop rules.'
+      ];
+      const noteIdx = Math.floor(rndf()*analystPhrases.length);
+
+      const safeExit = base.toFixed(2)+'x';
+      const riskExit = hi.toFixed(2)+'x';
+
+      $('#signals').innerHTML = `
+        <div class="sig">
+          <h3>Safe Mode <span class="badge safe">CONSISTENT</span></h3>
+          <p><b>Auto cash-out:</b> ${safeExit}</p>
+          <p><b>Entry window:</b> next ${windowMin}s · <b>Confidence:</b> ${confidence}%</p>
+          <p class="hint small">Demo preview — unlock real-time data after deposit.</p>
+          <p class="small">Analyst: ${analystPhrases[noteIdx]}</p>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="copy" data-copy="SAFE ${safeExit} @ ${formatTime(time)}">Copy</button>
+          </div>
+        </div>
+        <div class="sig">
+          <h3>High-Risk Mode <span class="badge risk">AGGRESSIVE</span></h3>
+          <p><b>Manual cash-out target:</b> ${riskExit}</p>
+          <p><b>Entry window:</b> next ${Math.max(15, windowMin-5)}s · <b>Confidence:</b> ${(confidence-8)}%</p>
+          <p class="hint small">Demo preview — unlock real-time data after deposit.</p>
+          <p class="small">Analyst: ${analystPhrases[(noteIdx+2)%analystPhrases.length]}</p>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button class="copy" data-copy="HIGH-RISK ${riskExit} @ ${formatTime(time)}">Copy</button>
+          </div>
+        </div>`;
+    }
+
+    function simulateSync(){
+      $('#syslog').textContent = '';
+      const bar = $('#bar');
+      bar.style.width = '0%';
+      const time = $('#time').value; const stake = $('#stake').value || '—';
+      log('> Connecting to server...');
+      let p = 0;
+      const steps = [
+        'Handshake OK',
+        'Fetching recent round history…',
+        'Retrieving encrypted Aviator data…',
+        `Calibrating for ${formatTime(time)} @ stake ${stake} LKR…`,
+        'Running volatility scan…',
+        'Compiling analyst note…',
+        'Signal package: READY'
+      ];
+      const timer = setInterval(()=>{
+        p += Math.random()*18+6;
+        if(p>=100){ p=100; clearInterval(timer); }
+        bar.style.width = p+'%';
+        if(steps.length) log('> '+steps.shift());
+        if(p===100){
+          makeSignals();
+          // open unlock modal after short delay to feel smooth
+          setTimeout(()=> $('#unlockModal').classList.add('active'), 450);
+        }
+      }, 450);
+    }
+
+    $('#generate').addEventListener('click', ()=>{
+      if(!$('#time').value){ alert('Please set your planned round time.'); return; }
+      simulateSync();
+    });
+    $('#clear').addEventListener('click', ()=>{
+      $('#time').value=''; $('#stake').value=''; $('#note').value='';
+      $('#syslog').textContent=''; $('#bar').style.width='0%';
+      $('#signals').innerHTML = '<div class="hint" style="font-size:13px;margin-bottom:6px">Demo preview. Full bot unlocks after deposit.</div><div class="small">No signal yet. Enter your time and stake, then press <span class="hint">Generate Signal</span>.</div>';
+    });
+
+    // Copy buttons
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.copy');
+      if(!btn) return;
+      const t = btn.getAttribute('data-copy');
+      navigator.clipboard.writeText(t).then(()=>{
+        btn.textContent = 'Copied!';
+        setTimeout(()=>btn.textContent='Copy',1200);
+      });
+    });
+
+    // Close modal on outside/Esc
+    const modal = $('#unlockModal');
+    modal.addEventListener('click', (e)=>{ if(e.target===modal) modal.classList.remove('active'); });
+    window.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && modal.classList.contains('active')) modal.classList.remove('active'); });
+  </script>
+</body>
+</html>
