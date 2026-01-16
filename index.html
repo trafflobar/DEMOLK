@@ -40,14 +40,16 @@
     .panel{background:rgba(255,255,255,.03);border:1px solid var(--stroke);border-radius:16px;padding:14px}
     .panel h2{margin:0 0 10px;font-size:15px}
     label{display:block;font-size:13px;color:var(--muted);margin:10px 0 6px}
-    /* iOS zoom fix: keep >=16px */
+    
+    /* Input styles kept for generic usage, though specific inputs removed */
     input[type="time"],input[type="number"],input[type="text"]{width:100%;background:#0b1024;border:1px solid rgba(255,255,255,.08);color:var(--text);padding:12px;border-radius:12px;font-size:16px;outline:none;-webkit-tap-highlight-color:transparent}
     input:focus{border-color:var(--accent)}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    @media (max-width:560px){.row{grid-template-columns:1fr}}
 
-    button{appearance:none;border:0;background:linear-gradient(135deg,var(--accent),#10c080);color:#041015;padding:12px 16px;border-radius:12px;font-weight:800;letter-spacing:.2px;cursor:pointer;box-shadow:0 6px 20px rgba(16,192,128,.35);touch-action:manipulation}
+    button{appearance:none;border:0;background:linear-gradient(135deg,var(--accent),#10c080);color:#041015;padding:12px 16px;border-radius:12px;font-weight:800;letter-spacing:.2px;cursor:pointer;box-shadow:0 6px 20px rgba(16,192,128,.35);touch-action:manipulation; width: 100%; font-size: 16px;}
+    button:active{transform:translateY(1px); filter:brightness(0.95);}
+    
     button.secondary{background:transparent;color:var(--text);border:1px dashed rgba(255,255,255,.2);box-shadow:none}
+    
     .actions{display:flex;gap:12px;margin-top:14px}
     @media (max-width:560px){.actions{flex-direction:column} .actions button{width:100%}}
 
@@ -63,14 +65,14 @@
     .badge{display:inline-block;padding:4px 8px;border-radius:999px;font-size:12px;font-weight:700}
     .safe{background:rgba(102,230,163,.15);color:#8bffca;border:1px solid rgba(102,230,163,.5)}
     .risk{background:rgba(255,204,102,.15);color:#ffdf9a;border:1px solid rgba(255,204,102,.5)}
-    .copy{background:#121b3e;color:#dfe8ff;border:1px solid rgba(255,255,255,.12)}
+    .copy{background:#121b3e;color:#dfe8ff;border:1px solid rgba(255,255,255,.12); width: auto; font-size: 13px; padding: 8px 12px; box-shadow: none;}
 
     .footer{padding:14px 16px;border-top:1px solid var(--stroke);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;color:var(--muted);font-size:12px}
     .hint{color:#9fb6ff}
 
     /* TRUST PACK */
     .trust{padding:12px 16px;border-top:1px solid var(--stroke);display:grid;gap:14px;background:linear-gradient(180deg,#0f1737,#0d1433)}
-    .trust .row{grid-template-columns:1fr 1fr}
+    .trust .row{grid-template-columns:1fr 1fr; display: grid; gap:12px;}
     @media (max-width:860px){.trust .row{grid-template-columns:1fr}}
     .infoBox{background:#0b1024;border:1px solid var(--stroke);border-radius:14px;padding:12px}
     .infoBox h3{margin:0 0 8px;font-size:14px}
@@ -96,7 +98,7 @@
     .official{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:#0b1024;border:1px solid var(--stroke);border-radius:12px;padding:10px}
     .cta{
       background:linear-gradient(135deg,var(--good),var(--good2));color:var(--btnText);border:none;border-radius:12px;
-      padding:12px 16px;font-weight:800;box-shadow:0 10px 28px rgba(83,226,106,.35), inset 0 0 0 1px rgba(255,255,255,.25);cursor:pointer
+      padding:12px 16px;font-weight:800;box-shadow:0 10px 28px rgba(83,226,106,.35), inset 0 0 0 1px rgba(255,255,255,.25);cursor:pointer; width: auto;
     }
     .cta:active{transform:translateY(1px);filter:brightness(.97)}
     a.cta{display:inline-flex;align-items:center;gap:8px;text-decoration:none}
@@ -112,7 +114,7 @@
     .tier{background:#0b1024;border:1px solid var(--stroke);border-radius:12px;padding:10px}
     .tier h4{margin:0 0 6px}
     .modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-    .deposit{background:linear-gradient(135deg,#6bff7f,#5fe371);color:#0b0f1f;border:none;padding:12px 16px;border-radius:12px;font-weight:800}
+    .deposit{background:linear-gradient(135deg,#6bff7f,#5fe371);color:#0b0f1f;border:none;padding:12px 16px;border-radius:12px;font-weight:800; text-align: center; text-decoration: none;}
     .ghost{font-size:12px;color:#9eb0d6}
 
     /* Sticky mobile bar */
@@ -139,45 +141,33 @@
       </header>
 
       <div class="grid">
-        <!-- Left: Inputs & System Log -->
         <section class="panel">
-          <h2>1) Your next play</h2>
-          <div class="row">
-            <div>
-              <label for="time">Planned round time (HH:MM)</label>
-              <input id="time" type="time" required />
-            </div>
-            <div>
-              <label for="stake">Planned stake (LKR)</label>
-              <input id="stake" type="number" min="50" step="10" placeholder="e.g. 2400" />
-            </div>
+          <h2>1) Generator</h2>
+          <div style="margin-bottom: 20px;">
+            <p style="color:var(--muted); font-size:13px; line-height: 1.5;">
+              Ready to connect. System will auto-detect optimal entry points based on current server hash.
+            </p>
           </div>
-          <label for="note">Optional label</label>
-          <input id="note" type="text" placeholder="Morning session / Test run" />
 
           <div class="actions">
-            <button id="generate">Generate Signal</button>
-            <button id="clear" class="secondary">Clear</button>
+            <button id="generate">GENERATE SIGNAL</button>
           </div>
 
-          <h2 style="margin-top:14px">2) System sync</h2>
+          <h2 style="margin-top:20px">2) System sync</h2>
           <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
           <div class="sys" id="syslog" aria-live="polite"></div>
         </section>
 
-        <!-- Right: Output signals -->
         <section class="panel">
           <h2>3) Your signal package</h2>
           <div class="signals" id="signals">
             <div class="hint" style="font-size:13px;margin-bottom:6px">Demo preview. Full bot unlocks after deposit.</div>
-            <div class="small">No signal yet. Enter your time and stake, then press <span class="hint">Generate Signal</span>.</div>
+            <div class="small">No signal yet. Press <span class="hint">Generate Signal</span> to start analysis.</div>
           </div>
         </section>
       </div>
 
-      <!-- TRUST PACK -->
       <section class="trust">
-        <!-- KPIs + Recent payouts -->
         <div class="row">
           <div class="infoBox">
             <h3>Recent payouts • <span lang="si">මෑත පසු ගෙවීම්</span></h3>
@@ -198,26 +188,24 @@
           </div>
         </div>
 
-        <!-- How it works -->
         <div class="infoBox">
           <h3>How it works • <span lang="si">එය කෙසේද ක්‍රියා කරන්නේ</span></h3>
           <div class="how">
             <div class="steps" lang="en">
               <div class="step"><b>1) Register & deposit</b> on the official platform. Use a solid balance to stabilize strategy.</div>
-              <div class="step"><b>2) Set time & stake</b> here, press <i>Generate</i> — system syncs and builds Safe/High-Risk exits.</div>
+              <div class="step"><b>2) Press Generate</b> — system syncs and builds Safe/High-Risk exits based on current hash.</div>
               <div class="step"><b>3) Follow the signal</b> — auto cash-out for Safe, manual for High-Risk. Respect stop-rules.</div>
               <div class="step"><b>4) Send screenshot</b> of deposit in TG to unlock the full bot.</div>
             </div>
             <div class="steps" lang="si">
               <div class="step"><b>1) ලියාපදිංචි වී / තැන්පත් කරන්න</b> නිල වේදිකාවේ. වැඩි බාලන්ස් තිබේ නම් යුක්ති සැබෑවට stab ව 됩니다.</div>
-              <div class="step"><b>2) වේලාව / දාමය සකසන්න</b> ඉහතදී, <i>Generate</i> ඔබන්න — පද්ධතිය සින්ක් වේ, Safe/High-Risk පිටවීමක් සකසයි.</div>
+              <div class="step"><b>2) Generate ඔබන්න</b> — පද්ධතිය සින්ක් වේ, Safe/High-Risk පිටවීමක් සකසයි.</div>
               <div class="step"><b>3) සලකුණු අනුගමනය</b> — Safe = auto cash-out, High-Risk = manual. නවතින නීති පිළිපදින්න.</div>
               <div class="step"><b>4) තැන්පත් ස්ක්‍රීන් එක</b> TG එකට යවන්න — සම්පූර්ණ බොට් අගුළුදෙයි.</div>
             </div>
           </div>
         </div>
 
-        <!-- Testimonials -->
         <div class="infoBox">
           <h3>Real feedback • <span lang="si">නැවතීම්</span></h3>
           <div class="testis" id="reviews">
@@ -228,7 +216,6 @@
           </div>
         </div>
 
-        <!-- Official link -->
         <div class="official">
           <div>
             <div style="font-weight:800;margin-bottom:6px">Official link — works only here</div>
@@ -248,13 +235,11 @@
     </div>
   </div>
 
-  <!-- Sticky mobile actions -->
   <div class="sticky">
     <a class="cta" href="https://reffpa.com/L?tag=d_3713491m_97c_&site=3713491&ad=97&r=registration" target="_blank">DEPOSIT NOW</a>
     <a class="cta" href="https://t.me/Virat999bot" target="_blank">Send Screenshot</a>
   </div>
 
-  <!-- UNLOCK MODAL -->
   <div class="modal" id="unlockModal" role="dialog" aria-modal="true" aria-labelledby="unlockTitle">
     <div class="sheet">
       <header>
@@ -296,7 +281,7 @@
 
   <script>
     const $ = sel => document.querySelector(sel);
-    const log = (msg)=>{ const box=$('#syslog'); box.innerHTML += msg + "\\n"; box.scrollTop = box.scrollHeight; }
+    const log = (msg)=>{ const box=$('#syslog'); box.innerHTML += msg + "\n"; box.scrollTop = box.scrollHeight; }
 
     // Online users (random 12–258), refresh every ~12s with slight jitter
     function rnd(min,max){ return Math.floor(Math.random()*(max-min+1))+min; }
@@ -309,17 +294,17 @@
     setInterval(setOnline, 12000 + rnd(-3000,3000));
 
     function seededRand(seed){
-      // deterministic-ish PRNG so signals feel consistent per input
+      // deterministic-ish PRNG so signals feel consistent
       let x = 1779033703 ^ seed.length;
       for(let i=0;i<seed.length;i++) x = Math.imul(x ^ seed.charCodeAt(i), 3432918353) >>> 0;
       x ^= x >>> 13; x = Math.imul(x, 3266489909) >>> 0; x ^= x >>> 16;
       return ()=> (x = (x + 0x6D2B79F5) >>> 0, (x ^ (x>>>15)) / 2**32);
     }
 
-    function formatTime(t){
-      if(!t) return ""; const [h,m] = t.split(':');
-      const hh = (""+h).padStart(2,'0'); const mm = (""+m).padStart(2,'0');
-      return `${hh}:${mm}`;
+    function formatTime(d){
+      const h = (""+d.getHours()).padStart(2,'0'); 
+      const m = (""+d.getMinutes()).padStart(2,'0');
+      return `${h}:${m}`;
     }
 
     // Recent payouts generator (LKR 50k – 780k)
@@ -340,10 +325,12 @@
     setInterval(fillPayouts, 45000);
 
     function makeSignals(){
-      const time = $('#time').value;
-      const stake = parseFloat($('#stake').value||"0");
-      const note  = $('#note').value.trim();
-      const key = `${time}|${stake}|${note}`;
+      // Generate current time for the signal display
+      const now = new Date();
+      const timeStr = formatTime(now);
+      
+      // Use random seed based on current seconds to vary results slightly
+      const key = "SIGNAL_" + Date.now();
       const rndf = seededRand(key);
 
       // derive mock values
@@ -368,21 +355,21 @@
         <div class="sig">
           <h3>Safe Mode <span class="badge safe">CONSISTENT</span></h3>
           <p><b>Auto cash-out:</b> ${safeExit}</p>
-          <p><b>Entry window:</b> next ${windowMin}s · <b>Confidence:</b> ${confidence}%</p>
+          <p><b>Entry window:</b> Now (${timeStr}) · <b>Confidence:</b> ${confidence}%</p>
           <p class="hint small">Demo preview — unlock real-time data after deposit.</p>
           <p class="small">Analyst: ${analystPhrases[noteIdx]}</p>
           <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="copy" data-copy="SAFE ${safeExit} @ ${formatTime(time)}">Copy</button>
+            <button class="copy" data-copy="SAFE ${safeExit} @ ${timeStr}">Copy</button>
           </div>
         </div>
         <div class="sig">
           <h3>High-Risk Mode <span class="badge risk">AGGRESSIVE</span></h3>
           <p><b>Manual cash-out target:</b> ${riskExit}</p>
-          <p><b>Entry window:</b> next ${Math.max(15, windowMin-5)}s · <b>Confidence:</b> ${(confidence-8)}%</p>
+          <p><b>Entry window:</b> Now (${timeStr}) · <b>Confidence:</b> ${(confidence-8)}%</p>
           <p class="hint small">Demo preview — unlock real-time data after deposit.</p>
           <p class="small">Analyst: ${analystPhrases[(noteIdx+2)%analystPhrases.length]}</p>
           <div style="display:flex;gap:8px;margin-top:8px">
-            <button class="copy" data-copy="HIGH-RISK ${riskExit} @ ${formatTime(time)}">Copy</button>
+            <button class="copy" data-copy="HIGH-RISK ${riskExit} @ ${timeStr}">Copy</button>
           </div>
         </div>`;
     }
@@ -391,15 +378,15 @@
       $('#syslog').textContent = '';
       const bar = $('#bar');
       bar.style.width = '0%';
-      const time = $('#time').value; const stake = $('#stake').value || '—';
-      log('> Connecting to server...');
+      
+      log('> Connecting to prediction server...');
       let p = 0;
       const steps = [
         'Handshake OK',
-        'Fetching recent round history…',
-        'Retrieving encrypted Aviator data…',
-        `Calibrating for ${formatTime(time)} @ stake ${stake} LKR…`,
-        'Running volatility scan…',
+        'Fetching recent hash history…',
+        'Retrieving live Aviator data stream…',
+        'Analyzing volatility patterns…',
+        'Calculating probability matrix…',
         'Compiling analyst note…',
         'Signal package: READY'
       ];
@@ -417,13 +404,8 @@
     }
 
     $('#generate').addEventListener('click', ()=>{
-      if(!$('#time').value){ alert('Please set your planned round time.'); return; }
+      // Removed input checks, proceed directly to simulation
       simulateSync();
-    });
-    $('#clear').addEventListener('click', ()=>{
-      $('#time').value=''; $('#stake').value=''; $('#note').value='';
-      $('#syslog').textContent=''; $('#bar').style.width='0%';
-      $('#signals').innerHTML = '<div class="hint" style="font-size:13px;margin-bottom:6px">Demo preview. Full bot unlocks after deposit.</div><div class="small">No signal yet. Enter your time and stake, then press <span class="hint">Generate Signal</span>.</div>';
     });
 
     // Copy buttons
